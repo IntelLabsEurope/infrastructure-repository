@@ -1,6 +1,6 @@
 # Infrastructure Repository
 
-The infrastructure repository is a tool that provides infrastructure related information collected from Openstack and Opendaylight. This subsystem is comprised of three key elements:
+The infrastructure repository is a tool that provides infrastructure related information collected from OpenStack and OpenDaylight. This subsystem is comprised of three key elements:
 
 * EPA controller
 * EPA Agent
@@ -9,13 +9,13 @@ The infrastructure repository is a tool that provides infrastructure related inf
 In the following the procedure to install and configure the tool on Ubuntu Machines. The same procedure has been tested on Fedora replacing apt-get with yum.
 
 ### Prerequisites
-* Openstack Version depends on the branch used (Branch: Openstack/Kilo, Branch: Openstack/Liberty)
-* Opendaylight Lithium Release
+* OpenStack Version depends on the branch used (Branch: OpenStack/Kilo, Branch: OpenStack/Liberty)
+* OpenDaylight Lithium Release
 * Neo4j Database
 
 ### EPA Controller
 Collect the information and store them in Neo4j DB. 
-Information are collected listening the Openstack notifications, querying the Openstack DBs and listening the agents notifications queue.
+Information are collected listening the OpenStack notifications, querying the Openstack DBs and listening the agents notifications queue.
 
 ##### Installation
 Install Python Mysql Connector
