@@ -80,8 +80,11 @@ curl -X POST http://<MIDDLEWARE_IP>:<MIDDLEWARE_PORT>/pop/ --header "Accept: app
 -d  'X-OCCI-Attribute: occi.epa.pop.graph_db_url="http://usr:password@<NEO4J_IP>:7474/db/data/" X-OCCI-Attribute: occi.epa.pop.odl_url="http://<ODL_IP>:8181/restconf/operational/"  X-OCCI-Attribute: occi.epa.pop.odl_name="admin" X-OCCI-Attribute: occi.epa.pop.odl_password="admin"' X-OCCI-Attribute: occi.epa.pop.name="GR-ATH-0001" 
 X-OCCI-Attribute: occi.epa.pop.lat=37.9997104  X-OCCI-Attribute: occi.epa.pop.lon=23.8168182'
 ```
+
 To see the list of PoPs navigate to:
-http://<middleware_ip>:<middleware_port>/pop/
+```
+http://<MIDDLEWARE_IP>:<MIDDLEWARE_PORT>/pop/
+```
 
 Click on the PoP stored and list the VMs of the PoP navigating to:
 ```
