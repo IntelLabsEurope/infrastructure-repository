@@ -79,49 +79,66 @@ class VirtualResources(object):
         os_keystone_db = config_section_map('OpenstackDB', config)['keystone_db']
         os_heat_db = config_section_map('OpenstackDB', config)['heat_db']
 
+        nova_enabled = config_section_map('Openstack', config)['nova_enabled']
+        cinder_enabled = config_section_map('Openstack', config)['cinder_enabled']
+        glance_enabled = config_section_map('Openstack', config)['glance_enabled']
+        heat_enabled = config_section_map('Openstack', config)['heat_enabled']
+        keystone_enabled = config_section_map('Openstack', config)['keystone_enabled']
+        neutron_enabled = config_section_map('Openstack', config)['neutron_enabled']
+
         # Openstack DB wrappers
-        self.nova_db = NovaDb(os_db_host, os_db_nova_usr, os_db_nova_pwd, os_nova_db)
-        self.cinder_db = CinderDb(os_db_host, os_db_cinder_usr, os_db_cinder_pwd, os_cinder_db)
-        self.glance_db = GlanceDb(os_db_host, os_db_glance_usr, os_db_glance_pwd, os_glance_db)
-        self.heat_db = HeatDb(os_db_host, os_db_heat_usr, os_db_heat_pwd, os_heat_db)
-        self.keystone_db = KeystoneDb(os_db_host, os_db_keystone_usr, os_db_keystone_pwd, os_keystone_db)
-        self.neutron_db = NeutronDb(os_db_host, os_db_neutron_usr, os_db_neutron_pwd, os_neutron_db)
 
-        # Adding Virtual resources
+        if keystone_enabled.lower() == 'true':
+            self.keystone_db = KeystoneDb(os_db_host, os_db_keystone_usr, os_db_keystone_pwd, os_keystone_db)
 
-        # Controller Service
-        add_controller_service(self.keystone_db, self.graph_db, self.pop, self.controller_hostname,
-                               self.controller_ip, now)
+            # Controller Service
+            add_controller_service(self.keystone_db, self.graph_db, self.pop, self.controller_hostname,
+                                   self.controller_ip, now)
 
-        # Neutron Networks
-        add_networks(self.neutron_db, self.graph_db, self.pop, now)
+        if cinder_enabled.lower() == 'true':
+            self.cinder_db = CinderDb(os_db_host, os_db_cinder_usr, os_db_cinder_pwd, os_cinder_db)
 
-        # Neutron Ports
-        add_ports(self.neutron_db, self.graph_db, self.pop, now)
+            # Cinder Volume Services
+            add_cinder_volume_services(self.cinder_db, self.graph_db, self.pop, now)
 
-        # Neutron Floating IPs
-        add_neutron_floating_ips(self.neutron_db, self.graph_db, self.pop, now)
+            # Cinder Snapshots
+            add_cinder_snapshots(self.cinder_db, self.graph_db, self.pop, now)
 
-        # Neutron Routers
-        add_neutron_routers(self.neutron_db, self.graph_db, self.pop, now)
+            # Cinder Volumes
+            add_cinder_volumes(self.cinder_db, self.graph_db, self.pop, now)
 
-        # Cinder Volume Services
-        add_cinder_volume_services(self.cinder_db, self.graph_db, self.pop, now)
+        if glance_enabled.lower() == 'true':
+            self.glance_db = GlanceDb(os_db_host, os_db_glance_usr, os_db_glance_pwd, os_glance_db)
 
-        # Cinder Snapshots
-        add_cinder_snapshots(self.cinder_db, self.graph_db, self.pop, now)
+        if heat_enabled.lower() == 'true' and keystone_enabled.lower() == 'true':
+            self.heat_db = HeatDb(os_db_host, os_db_heat_usr, os_db_heat_pwd, os_heat_db)
+            # Heat Stacks
+            add_heat_stacks(self.heat_db, self.keystone_db, self.graph_db, self.pop, now, self.controller_hostname)
 
-        # Cinder Volumes
-        add_cinder_volumes(self.cinder_db, self.graph_db, self.pop, now)
+        if neutron_enabled.lower() == 'true':
+            self.neutron_db = NeutronDb(os_db_host, os_db_neutron_usr, os_db_neutron_pwd, os_neutron_db)
 
-        # Hypervisors
-        add_nova_hypervisors(self.nova_db, self.graph_db, self.pop, now)
+            # Neutron Networks
+            add_networks(self.neutron_db, self.graph_db, self.pop, now)
 
-        # Nova Virtual Machines
-        add_nova_instances(self.nova_db, self.neutron_db, self.graph_db, self.pop, now)
+            # Neutron Floating IPs
+            add_neutron_floating_ips(self.neutron_db, self.graph_db, self.pop, now)
 
-        # Heat Stacks
-        add_heat_stacks(self.heat_db, self.keystone_db, self.graph_db, self.pop, now, self.controller_hostname)
+            # Neutron Routers
+            add_neutron_routers(self.neutron_db, self.graph_db, self.pop, now)
+
+            # Neutron Ports
+            add_ports(self.neutron_db, self.graph_db, self.pop, now)
+
+        if nova_enabled.lower() == 'true':
+            self.nova_db = NovaDb(os_db_host, os_db_nova_usr, os_db_nova_pwd, os_nova_db)
+
+            # Hypervisors
+            add_nova_hypervisors(self.nova_db, self.graph_db, self.pop, now)
+
+            if neutron_enabled.lower() == 'true':
+                # Nova Virtual Machines
+                add_nova_instances(self.nova_db, self.neutron_db, self.graph_db, self.pop, now)
 
 
 def get_host_node(graph_db, hostname, timestamp):
