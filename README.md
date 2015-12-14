@@ -65,9 +65,9 @@ python setup.py install
 
 ##### Run API component / Middleware
 Provide required information in a configuration file.
-A sample is provided in config/middleware.cfg
-Run the middleware with the following command:
+A sample is provided in config/middleware.cfg.
 
+Run the middleware with the following command:
 ````
 infrastructure_repo_api -c <path/to/configuration/file>
 ```
