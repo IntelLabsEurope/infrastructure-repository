@@ -92,4 +92,4 @@ http://<MIDDLEWARE_IP>:<MIDDLEWARE_PORT>/pop/<POP_ID>/vm/
 ```
 
 ### Suggestions:
-For long run, [Supervisor ] (http://supervisord.org/) has been used to monitor and control EPA_Controller and API MIddleware.
+To support long term management of the EPA Controller and API Middleware, [Supervisor ] (http://supervisord.org/) an open source solution for process monitoring and control is used.
