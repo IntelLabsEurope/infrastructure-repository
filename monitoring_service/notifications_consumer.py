@@ -86,18 +86,36 @@ class NotificationsConsumer(Thread):
         Start the listener of the notification queue
 
         """
-        queue_name = self.queue
         parameters = pika.URLParameters(self.conn_string)
         connection = pika.BlockingConnection(parameters)
 
         channel = connection.channel()
-        channel.queue_declare(queue=queue_name)
-        print ' [*] Waiting for OpenStack messages.'
+        channel.exchange_declare(exchange='nova', type='topic')
+        result = channel.queue_declare(exclusive=True)
+        queue_name = result.method.queue
+        routing_key='notifications.info'
+        exchanges = ['ceilometer', 'cinder', 'glance', 'heat', 'nova', 'neutron']
+        self.bind_queue(channel, queue_name, exchanges, routing_key)
         channel.basic_consume(self.callback,
                               queue=queue_name,
                               no_ack=True)
 
         channel.start_consuming()
+        print ' [*] Waiting for OpenStack messages.'
+
+    def bind_queue(self, channel, queue_name, exchanges, routing_key):
+        """
+        Bind list of exchanges to the given queue for the given routing queue
+
+        :param channel: AMQP channel
+        :param queue_name: exclusive queue to collect Openstack notifications
+        :param exchanges: list of exchanges
+        :param routing_key: Routing key
+        """
+        for exchange in exchanges:
+            channel.exchange_declare(exchange=exchange, type='topic')
+
+        channel.queue_bind(exchange=exchange, queue=queue_name, routing_key=routing_key)
 
     def callback(self, ch, method, properties, body):
         """
