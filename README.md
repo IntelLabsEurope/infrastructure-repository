@@ -9,7 +9,7 @@ The infrastructure repository is a tool that provides infrastructure related inf
 In the following the procedure to install and configure the tool on Ubuntu Machines. The same procedure has been tested on Fedora replacing apt-get with yum.
 
 ### Prerequisites
-* Openstack Kilo Release
+* Openstack Version depends on the branch used (Branch: Openstack/Kilo, Branch: Openstack/Liberty)
 * Opendaylight Lithium Release
 * Neo4j Database
 
