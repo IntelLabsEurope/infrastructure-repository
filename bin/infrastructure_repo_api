@@ -1,0 +1,200 @@
+#!/usr/bin/env python2.7
+
+# Copyright 2015 Intel Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Start the Middleware API
+"""
+
+__author__ = 'gpetralia'
+
+from api.occi_epa.backends import epa_backends
+from api.occi_epa.backends import link, pop, switch_interface
+from api.occi_epa.backends import switch
+from api.occi_epa.extensions import epa_addon
+from api.occi_epa.wsgi import EPAApplication
+from wsgiref.simple_server import make_server
+from common.utils import config_section_map
+import ConfigParser
+import sys
+import getopt
+
+
+def start_api(pop_url, middleware_port):
+    stack_kind = epa_addon.STACK
+    stack_link = epa_addon.STACK_LINK
+    stack_backend = epa_backends.StackBackend()
+    vm_kind = epa_addon.VM
+    vm_link = epa_addon.VM_LINK
+    vm_backend = epa_backends.VMBackend()
+    hypervisor_kind = epa_addon.HYPERVISOR
+    hypervisor_link = epa_addon.HYPERVISOR_LINK
+    hypervisor_backend = epa_backends.HypervisorBackend()
+    volume_kind = epa_addon.VOLUME
+    volume_link = epa_addon.VOLUME_LINK
+    volume_backend = epa_backends.VolumeBackend()
+    snapshot_kind = epa_addon.SNAPSHOT
+    snapshot_link = epa_addon.SNAPSHOT_LINK
+    snapshot_backend = epa_backends.SnapshotBackend()
+    cinder_volume_service_kind = epa_addon.CINDER_VOLUME_SERVICE
+    cinder_volume_service_link = epa_addon.CINDER_VOLUME_SERVICE_LINK
+    cinder_volume_service_backend = epa_backends.CinderVolumeServiceBackend()
+    port_kind = epa_addon.PORT
+    port_link = epa_addon.PORT_LINK
+    port_backend = epa_backends.PortBackend()
+    router_kind = epa_addon.ROUTER
+    router_link = epa_addon.ROUTER_LINK
+    router_backend = epa_backends.RouterBackend()
+    floating_ip_kind = epa_addon.FLOATING_IP
+    floating_ip_link = epa_addon.FLOATING_IP_LINK
+    floating_ip_backend = epa_backends.FloatingIpBackend()
+    net_kind = epa_addon.NETWORK
+    net_link = epa_addon.NETWORK_LINK
+    net_backend = epa_backends.NetBackend()
+    controller_service_kind = epa_addon.CONTROLLER_SERVICE
+    controller_service_link = epa_addon.CONTROLLER_SERVICE_LINK
+    controller_service_backend = epa_backends.ControllerServiceBackend()
+
+
+    machine_kind = epa_addon.MACHINE
+    machine_link = epa_addon.MACHINE_LINK
+    machine_backend = epa_backends.MachineBackend()
+    cache_kind = epa_addon.CACHE
+    cache_link = epa_addon.CACHE_LINK
+    cache_backend = epa_backends.CacheBackend()
+    osdev_kind = epa_addon.OS_DEV
+    osdev_link = epa_addon.OS_DEV_LINK
+    osdev_backend = epa_backends.OSDevBackend()
+    pu_kind = epa_addon.PU
+    pu_link = epa_addon.PU_LINK
+    pu_backend = epa_backends.PUBackend()
+    core_kind = epa_addon.CORE
+    core_link = epa_addon.CORE_LINK
+    core_backend = epa_backends.CoreBackend()
+    bridge_kind = epa_addon.BRIDGE
+    bridge_link = epa_addon.BRIDGE_LINK
+    bridge_backend = epa_backends.BridgeBackend()
+    pcidev_kind = epa_addon.PCI_DEV
+    pcidev_link = epa_addon.PCI_DEV_LINK
+    pcidev_backend = epa_backends.PCIDevBackend()
+    numanode_kind = epa_addon.NUMA_NODE
+    numanode_link = epa_addon.NUMA_NODE_LINK
+    numanode_backend = epa_backends.NumaNodeBackend()
+    socket_kind = epa_addon.SOCKET
+    socket_link = epa_addon.SOCKET_LINK
+    socket_backend = epa_backends.SocketBackend()
+
+
+    pop_kind = epa_addon.POP
+    pop_link = epa_addon.POP_LINK
+    pop_backend = pop.PoPBackend()
+    pop_link_backend = pop.PoPLinkBackend()
+
+    switch_kind = epa_addon.SWITCH
+    switch_link = epa_addon.SWITCH_LINK
+    switch_backend = switch.SwitchBackend()
+    switch_link_backend = switch.SwitchLinkBackend()
+
+    switch_interface_kind = epa_addon.SWITCH_INTERFACE
+    switch_interface_link = epa_addon.SWITCH_INTERFACE_LINK
+    switch_interface_backend = switch_interface.SwitchInterfaceBackend()
+    switch_interface_link_backend = switch_interface.SwitchInterfaceLinkBackend()
+
+    link_backend = link.LinkBackend()
+
+    app = EPAApplication(pop_url)
+
+    app.register_backend(stack_kind, stack_backend)
+    app.register_backend(stack_link, link_backend)
+    app.register_backend(vm_kind, vm_backend)
+    app.register_backend(vm_link, link_backend)
+    app.register_backend(hypervisor_kind, hypervisor_backend)
+    app.register_backend(hypervisor_link, link_backend)
+    app.register_backend(volume_kind, volume_backend)
+    app.register_backend(volume_link, link_backend)
+    app.register_backend(snapshot_kind, snapshot_backend)
+    app.register_backend(snapshot_link, link_backend)
+    app.register_backend(cinder_volume_service_kind, cinder_volume_service_backend)
+    app.register_backend(cinder_volume_service_link, link_backend)
+    app.register_backend(port_kind, port_backend)
+    app.register_backend(port_link, link_backend)
+    app.register_backend(router_kind, router_backend)
+    app.register_backend(router_link, link_backend)
+    app.register_backend(floating_ip_kind, floating_ip_backend)
+    app.register_backend(floating_ip_link, link_backend)
+    app.register_backend(net_kind, net_backend)
+    app.register_backend(net_link, link_backend)
+    app.register_backend(controller_service_kind, controller_service_backend)
+    app.register_backend(controller_service_link, link_backend)
+    app.register_backend(machine_kind, machine_backend)
+    app.register_backend(machine_link, link_backend)
+    app.register_backend(cache_kind, cache_backend)
+    app.register_backend(cache_link, link_backend)
+    app.register_backend(osdev_kind, osdev_backend)
+    app.register_backend(osdev_link, link_backend)
+    app.register_backend(pu_kind, pu_backend)
+    app.register_backend(pu_link, link_backend)
+    app.register_backend(core_kind, core_backend)
+    app.register_backend(core_link, link_backend)
+    app.register_backend(bridge_kind, bridge_backend)
+    app.register_backend(bridge_link, link_backend)
+    app.register_backend(pcidev_kind, pcidev_backend)
+    app.register_backend(pcidev_link, link_backend)
+    app.register_backend(numanode_kind, numanode_backend)
+    app.register_backend(numanode_link, link_backend)
+    app.register_backend(socket_kind, socket_backend)
+    app.register_backend(socket_link, link_backend)
+    app.register_backend(pop_kind, pop_backend)
+    app.register_backend(pop_link, pop_link_backend)
+    app.register_backend(switch_kind, switch_backend)
+    app.register_backend(switch_link, switch_link_backend)
+    app.register_backend(switch_interface_kind, switch_interface_backend)
+    app.register_backend(switch_interface_link, switch_interface_link_backend)
+    httpd = make_server('', int(middleware_port), app)
+    httpd.serve_forever()
+
+
+def main(argv):
+    """
+    Check for command line arguments
+
+    """
+    configuration_file = 'middleware.cfg'
+
+    try:
+        opts, args = getopt.getopt(argv,"hc:",["configFile="])
+    except getopt.GetoptError:
+        print 'infrastructure_repo_api -c <config_file>'
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '-h':
+            print 'infrastructure_repo_api -c <config_file>'
+            sys.exit()
+        elif opt in ("-c", "--config"):
+            configuration_file = arg
+
+    if configuration_file == '':
+        configuration_file = 'middleware.cfg'
+    return configuration_file
+
+
+if __name__ == '__main__':
+    config_file = main(sys.argv[1:])
+    config = ConfigParser.ConfigParser()
+    config.read(config_file)
+    db_url = config_section_map('PoP_DB', config)['db_url']
+    middleware_port = config_section_map('Middleware', config)['middleware_port']
+    start_api(db_url, middleware_port)
