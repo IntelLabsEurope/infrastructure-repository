@@ -4,7 +4,7 @@ The infrastructure repository is a tool that provides infrastructure related inf
 
 * EPA controller
 * EPA Agent
-* API
+* API Middleware
 
 In the following the procedure to install and configure the tool on Ubuntu Machines. The same procedure has been tested on Fedora replacing apt-get with yum.
 
@@ -54,7 +54,7 @@ Run the agent:
 python agent.py -c </path/to/the/configuration/file/>
 ```
 
-### API
+### API Middleware
 The API component exposes an OCCI interface to the information stored in one or more the infrastructure repositories (each one called Point of Presence (PoP)).
 ##### Installation
 In the root directory:
@@ -63,7 +63,7 @@ pip install -r requirements.txt
 python setup.py install
 ```
 
-##### Run API component / Middleware
+##### Run API Middleware component
 Provide required information in a configuration file.
 A sample is provided in config/middleware.cfg.
 
@@ -90,3 +90,6 @@ Click on the PoP stored and list the VMs of the PoP navigating to:
 ```
 http://<MIDDLEWARE_IP>:<MIDDLEWARE_PORT>/pop/<POP_ID>/vm/
 ```
+
+### Suggestions:
+For long run, [Supervisor ] (http://supervisord.org/) has been used to monitor and control EPA_Controller and API MIddleware.
