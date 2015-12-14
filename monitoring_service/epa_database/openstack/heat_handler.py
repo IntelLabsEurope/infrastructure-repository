@@ -101,5 +101,7 @@ class OrchestrationHandler(oh.OpenstackHandler):
         :return KeystoneDb:
         """
         keystone_db_name = config_section_map('OpenstackDB', config)['keystone_db']
-        keystone_db = KeystoneDb(self.os_db_host, self.os_db_usr, self.os_db_pwd, keystone_db_name)
+        keystone_db_usr = config_section_map('OpenstackDB', config)['keystone_db_username']
+        keystone_db_pwd = config_section_map('OpenstackDB', config)['keystone_db_password']
+        keystone_db = KeystoneDb(self.os_db_host, keystone_db_usr, keystone_db_pwd, keystone_db_name)
         return keystone_db

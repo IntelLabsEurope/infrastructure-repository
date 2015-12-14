@@ -114,5 +114,7 @@ class NovaHandler(oh.OpenstackHandler):
         :return NeutronDb:
         """
         neutron_db_label = config_section_map('OpenstackDB', self.config)['neutron_db']
-        neutron_db = NeutronDb(self.os_db_host, self.os_db_usr, self.os_db_pwd, neutron_db_label)
+        neutron_db_usr = config_section_map('OpenstackDB', self.config)['neutron_db_username']
+        neutron_db_pwd = config_section_map('OpenstackDB', self.config)['neutron_db_password']
+        neutron_db = NeutronDb(self.os_db_host, neutron_db_usr, neutron_db_pwd, neutron_db_label)
         return neutron_db

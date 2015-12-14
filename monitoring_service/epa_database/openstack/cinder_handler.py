@@ -129,7 +129,9 @@ class VolumeHandler(oh.OpenstackHandler):
         :return HeatDb:
         """
         heat_db_name = config_section_map('OpenstackDB', config)['heat_db']
-        heat_db = HeatDb(self.os_db_host, self.os_db_usr, self.os_db_pwd, heat_db_name)
+        heat_db_usr = config_section_map('OpenstackDB', config)['heat_db_username']
+        heat_db_pwd = config_section_map('OpenstackDB', config)['heat_db_password']
+        heat_db = HeatDb(self.os_db_host, heat_db_usr, heat_db_pwd, heat_db_name)
         return heat_db
 
     def get_keystone_db(self, config):
@@ -139,7 +141,9 @@ class VolumeHandler(oh.OpenstackHandler):
         :return KeystoneDb:
         """
         keystone_db_name = config_section_map('OpenstackDB', config)['keystone_db']
-        keystone_db = KeystoneDb(self.os_db_host, self.os_db_usr, self.os_db_pwd, keystone_db_name)
+        keystone_db_usr = config_section_map('OpenstackDB', config)['keystone_db_username']
+        keystone_db_pwd = config_section_map('OpenstackDB', config)['keystone_db_password']
+        keystone_db = KeystoneDb(self.os_db_host, keystone_db_usr, keystone_db_pwd, keystone_db_name)
         return keystone_db
 
 
