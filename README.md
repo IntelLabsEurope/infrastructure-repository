@@ -33,4 +33,7 @@ infrastructure_repo -c <path/to/configuration/file>
 ```
 
 ### EPA Agent
-The EPA Agent run on each machine of the cluster. It should be configured to run on the boot of the machine. 
+The EPA Agent run on each machine of the cluster. It collects hardware information about the machine where it is running and sends it to the controller.
+
+##### Installation
+
