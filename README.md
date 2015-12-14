@@ -1,5 +1,5 @@
 # infrastructure-repository
-The infrastructure repository is a tool that provides infrastructure related information collected from Openstack and Opendaylight. This subsystem is comprised of a number three key elements:
+The infrastructure repository is a tool that provides infrastructure related information collected from Openstack and Opendaylight. This subsystem is comprised of three key elements:
 
 * EPA controller
 * EPA Agent
