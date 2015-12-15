@@ -1,21 +1,21 @@
 # Infrastructure Repository
 
-The infrastructure repository is a tool that provides infrastructure related information collected from OpenStack and OpenDaylight. This subsystem is comprised of three key elements:
+The infrastructure repository is a tool that provides centralized collection and persistence of infrastructure related information available from an infrastructure virtualization and management layer build with open source components including OpenStack and OpenDaylight. This subsystem is comprised of three key elements:
 
 * EPA controller
 * EPA Agent
 * API Middleware
 
-In the following the procedure to install and configure the tool on Ubuntu Machines. The same procedure has been tested on Fedora replacing apt-get with yum.
+The following outlines how to install and configure the tool on Ubuntu machines. The same procedure has also been tested on Fedora which requires replacing apt-get with yum.
 
 ### Prerequisites
-* OpenStack Version depends on the branch used (Branch: OpenStack/Kilo, Branch: OpenStack/Liberty)
+* OpenStack (two versions currently supported Branch: OpenStack/Kilo, Branch: OpenStack/Liberty)
 * OpenDaylight Lithium Release
 * Neo4j Database
 
 ### EPA Controller
-Collect the information and store them in Neo4j DB. 
-Information are collected listening the OpenStack notifications, querying the Openstack DBs and listening the agents notifications queue.
+This component is responsible for collecting infrastructure information and storing the information in a Neo4j DB. 
+Infrastructure related information is collected by listening to OpenStack notifications, querying the OpenStack services DBs and from updates received from EPA agents running on compute nodes within a NFVI-PoP.
 
 ##### Installation
 Install Python Mysql Connector
@@ -28,18 +28,19 @@ pip install -r requirements.txt
 python setup.py install
 ````
 ##### Run EPA Controller
-Provide required information in a configuration file.
-A sample is provided in config/epa_controller.cfg
+First you must edit the EPA Controller configuration file with your specific deployment details.
+A sample is provided in config/epa_controller.cfg.
+
 Run the controller with the following command:
 ````
 infrastructure_repo -c <path/to/configuration/file>
 ```
 
 ### EPA Agent
-The EPA Agent run on each machine of the cluster. It collects hardware information about the machine where it is running and sends it to the controller. The agent should be launched after the Controller is up and running.
+An EPA Agent runs on each compute node within an NFVI-PoP. It collects hardware information from the compute node where it is running and sends it to the controller. The agent should be launched after the Controller is up and running.
 
 ##### Installation
-Copy a priv key of the controller to the machine where you want to run the agent.
+Copy a private key of the controller to the machine where you want to run the agent.
 Install hwloc:
 ````
 apt-get install hwloc 
@@ -55,7 +56,7 @@ python agent.py -c </path/to/the/configuration/file/>
 ```
 
 ### API Middleware
-The API component exposes an OCCI interface to the information stored in one or more the infrastructure repositories (each one called Point of Presence (PoP)).
+The API middleware component exposes an OCCI compliant interface to consuming functions which require access to infrastructure related information stored in one or more infrastructure repositories (each one called Point of Presence (PoP)).
 ##### Installation
 In the root directory:
 ````python
@@ -81,7 +82,7 @@ curl -X POST http://<MIDDLEWARE_IP>:<MIDDLEWARE_PORT>/pop/ --header "Accept: app
 X-OCCI-Attribute: occi.epa.pop.lat=37.9997104  X-OCCI-Attribute: occi.epa.pop.lon=23.8168182'
 ```
 
-To see the list of PoPs navigate to:
+To see the list of available PoPs navigate to:
 ```
 http://<MIDDLEWARE_IP>:<MIDDLEWARE_PORT>/pop/
 ```
@@ -92,4 +93,4 @@ http://<MIDDLEWARE_IP>:<MIDDLEWARE_PORT>/pop/<POP_ID>/vm/
 ```
 
 ### Suggestions:
-To support long term management of the EPA Controller and API Middleware, [Supervisor ] (http://supervisord.org/) an open source solution for process monitoring and control is used.
+To support the long term management of the EPA Controller and API Middleware components, [Supervisor ] (http://supervisord.org/) an open source solution for process monitoring and control is used.
